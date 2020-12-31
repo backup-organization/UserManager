@@ -25,7 +25,8 @@ class Ban implements JsonSerializable
     public $reason = "";
     /** @var string */
     public $types;
-
+    public $bannedBy;
+    
     /**
      * Ban constructor.
      * @param int $user_id
@@ -35,7 +36,7 @@ class Ban implements JsonSerializable
      * @param string $reason
      * @param string $types
      */
-    public function __construct(int $user_id, int $since, int $until, bool $expires, string $reason, string $types)
+    public function __construct(int $user_id, int $since, int $until, bool $expires, string $reason, string $types, Player $bannedBy)
     {
         $this->user_id = $user_id;
         $this->since = $since;
@@ -43,6 +44,7 @@ class Ban implements JsonSerializable
         $this->expires = $expires;
         $this->reason = $reason;
         $this->types = $types;
+        $this->bannedBy = $bannedBy;
     }
 
     /**
