@@ -64,7 +64,7 @@ class SettingsListener implements Listener
         if($user === null){
             return;
         }
-            Loader::$queries->createUserSettings($user->getId(), $user->getPlayer()->getLocale(), function (int $insertId, int $affectedRows) use ($user): void {
+            Loader::$queries->createUserSettings($user->getId(), $user->getPlayer()->getLocale() ?? "en_US", function (int $insertId, int $affectedRows) use ($user): void {
                  if($user->getPlayer() === null and $user->getPlayer()->isClosed()){
             return;
         }
