@@ -610,7 +610,7 @@ class API
         if ($user->getRealUsername() !== $user->getDisplayName()) $content .= TextFormat::EOL . TextFormat::RESET . "Nickname: " . $user->getDisplayName();
         $content .= TextFormat::EOL . TextFormat::RESET . "Reason: " . $ban->getReason();
         $content .= TextFormat::EOL . TextFormat::RESET . "Since: " . strftime("%c", $ban->getSince());
-        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . $expiry);
+        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . $expiry;
         $content .= TextFormat::EOL . TextFormat::RESET . "Expires: " . ($ban->expires ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         if ($ban->expires) $content .= TextFormat::EOL . TextFormat::RESET . "Has Expired: " . ($ban->hasExpired() ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         $content .= TextFormat::EOL . TextFormat::RESET . "Name ban: " . ($ban->isTypeBanned(Ban::TYPE_NAME) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
