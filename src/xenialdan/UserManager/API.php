@@ -602,10 +602,15 @@ class API
         }
         $content = "";
         $content .= "Username: " . $user->getRealUsername();
+        if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
+            $expirey = "Forever";
+        }else{
+            $expiry = $ban->getUntil();
+        }
         if ($user->getRealUsername() !== $user->getDisplayName()) $content .= TextFormat::EOL . TextFormat::RESET . "Nickname: " . $user->getDisplayName();
         $content .= TextFormat::EOL . TextFormat::RESET . "Reason: " . $ban->getReason();
         $content .= TextFormat::EOL . TextFormat::RESET . "Since: " . strftime("%c", $ban->getSince());
-        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . strftime("%c", $ban->getUntil());
+        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . strftime("%c", $expiry);
         $content .= TextFormat::EOL . TextFormat::RESET . "Expires: " . ($ban->expires ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         if ($ban->expires) $content .= TextFormat::EOL . TextFormat::RESET . "Has Expired: " . ($ban->hasExpired() ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
         $content .= TextFormat::EOL . TextFormat::RESET . "Name ban: " . ($ban->isTypeBanned(Ban::TYPE_NAME) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
@@ -668,7 +673,7 @@ class API
             if ($type_ip) $types .= Ban::TYPE_IP;
             if ($type_uuid) $types .= Ban::TYPE_UUID;
             if ($type_xuid) $types .= Ban::TYPE_XUID;
-            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types);
+            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types, $player);
             API::openBanEntryUI($player, $ban, $form);
         });
         $form->setCallableClose(function (Player $player) use ($previousForm): void {
