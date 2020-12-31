@@ -58,7 +58,7 @@ class SettingsListener implements Listener
         }
         
         Loader::$queries->changeUserSettingsLanguage($user->getId(), $user->getPlayer()->getLocale(), function (int $affectedRows) use ($user): void {
-             if($user->getPlayer() === null and $user->getPlayer()->isClosed()){
+             if($user->getPlayer() === null){
             return;
         }
         if($user === null){
