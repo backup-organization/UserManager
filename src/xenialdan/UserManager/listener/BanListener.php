@@ -11,6 +11,7 @@ use xenialdan\UserManager\event\UserBanEvent;
 use xenialdan\UserManager\event\UserJoinEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\models\Ban;
+use VMPE\Zeao\Network;
 
 class BanListener implements Listener
 {
