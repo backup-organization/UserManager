@@ -34,8 +34,8 @@ class BanListener implements Listener
                 return;
             }
             $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!" . TextFormat::EOL . $ban->reason;
-            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . $ban->getSince();
-            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . $ban->getUntil();
+            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . gmdate("Y, m, d, H, i, s", $ban->getSince());
+            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . gmdate("Y, m, d, H, i, s", $ban->getUntil());
             $debug = "Banned user tried to log in:" . TextFormat::EOL . $ban;
             $kick = false;
             if ($ban->isTypeBanned(Ban::TYPE_IP) && $user->getIP() === $player->getAddress()) {
