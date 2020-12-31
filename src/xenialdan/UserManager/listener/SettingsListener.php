@@ -50,11 +50,27 @@ class SettingsListener implements Listener
     public function onJoin(UserJoinEvent $event): void
     {
         $user = $event->getUser();
-        if($user->getPlayer() === null){
+        if($user->getPlayer() === null and $user->getPlayer()->isClosed()){
             return;
         }
+        if($user === null){
+            return;
+        }
+        
         Loader::$queries->changeUserSettingsLanguage($user->getId(), $user->getPlayer()->getLocale(), function (int $affectedRows) use ($user): void {
+             if($user->getPlayer() === null and $user->getPlayer()->isClosed()){
+            return;
+        }
+        if($user === null){
+            return;
+        }
             Loader::$queries->createUserSettings($user->getId(), $user->getPlayer()->getLocale(), function (int $insertId, int $affectedRows) use ($user): void {
+                 if($user->getPlayer() === null and $user->getPlayer()->isClosed()){
+            return;
+        }
+        if($user === null){
+            return;
+        }
                 if ($affectedRows > 0) {
                     Loader::getInstance()->getLogger()->debug("Created entry $insertId in user_settings for user " . $user->getRealUsername());
                 }
