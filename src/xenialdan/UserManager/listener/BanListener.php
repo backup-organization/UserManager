@@ -34,15 +34,13 @@ class BanListener implements Listener
                 });
                 return;
             }
-            $date = Network::timeFormat($ban->getSince());
-            $date2 = Network::timeFormat($ban->getUntil());
             $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->reason;
             $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . strftime("%c", $ban->getSince());
         if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
             $expiry = "Forever";
         }else{
-            $expiry = $ban->getUntil();
+            $expiry = strftime("%c", $ban->getUntil());
         }
             $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . $expiry;
             $debug = "Banned user tried to log in:" . TextFormat::EOL . $ban;
@@ -74,10 +72,10 @@ class BanListener implements Listener
                  $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->getReason();
             $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY .strftime("%c", $ban->getSince());
-        if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
+      if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
             $expiry = "Forever";
         }else{
-            $expiry = $ban->getUntil();
+            $expiry = strftime("%c", $ban->getUntil());
         }
             $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . $expiry;
                 $event->getUser()->getPlayer()->kick($msg, false, $msg);
