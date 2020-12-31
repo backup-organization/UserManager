@@ -50,6 +50,9 @@ class SettingsListener implements Listener
     public function onJoin(UserJoinEvent $event): void
     {
         $user = $event->getUser();
+        if($user->getPlayer() === null){
+            return;
+        }
         Loader::$queries->changeUserSettingsLanguage($user->getId(), $user->getPlayer()->getLocale(), function (int $affectedRows) use ($user): void {
             Loader::$queries->createUserSettings($user->getId(), $user->getPlayer()->getLocale(), function (int $insertId, int $affectedRows) use ($user): void {
                 if ($affectedRows > 0) {
