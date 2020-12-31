@@ -673,7 +673,7 @@ class API
             if ($type_ip) $types .= Ban::TYPE_IP;
             if ($type_uuid) $types .= Ban::TYPE_UUID;
             if ($type_xuid) $types .= Ban::TYPE_XUID;
-            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types, $player);
+            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types);
             API::openBanEntryUI($player, $ban, $form);
         });
         $form->setCallableClose(function (Player $player) use ($previousForm): void {
