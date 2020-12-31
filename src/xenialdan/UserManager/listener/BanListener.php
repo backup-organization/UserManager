@@ -38,9 +38,9 @@ class BanListener implements Listener
             $date2 = Network::timeFormat($ban->getUntil());
             $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->reason;
-            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . strftime("%S seconds, %M minutes, %H hours,%d days, and %m months", $ban->getSince());
+            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . strftime("%c", $ban->getSince());
        
-            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY .  strftime("%S seconds, %M minutes, %H hours, %d days, and %m months", $ban->getUntil());
+            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY .  strftime("%c", $ban->getUntil());
             $debug = "Banned user tried to log in:" . TextFormat::EOL . $ban;
             $kick = false;
             if ($ban->isTypeBanned(Ban::TYPE_IP) && $user->getIP() === $player->getAddress()) {
@@ -69,9 +69,9 @@ class BanListener implements Listener
                 $ban = $event->getBan();
                  $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->getReason();
-            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY .strftime("%S seconds, %M minutes, %H hours,%d days, and %m months", $ban->getSince());
+            $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY .strftime("%c", $ban->getSince());
        
-            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . strftime("%S seconds, %M minutes, %H hours, %d days, and %m months", $ban->getUntil());
+            $msg .= TextFormat::RED . "\nBanned Until: " . TextFormat::GRAY . strftime("%c", $ban->getUntil());
                 $event->getUser()->getPlayer()->kick($msg, false, $msg);
             }
         }
