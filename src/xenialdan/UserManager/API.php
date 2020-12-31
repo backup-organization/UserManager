@@ -603,7 +603,7 @@ class API
         $content = "";
         $content .= "Username: " . $user->getRealUsername();
         if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
-            $expirey = "Forever";
+            $expiry = "Forever";
         }else{
             $expiry = $ban->getUntil();
         }
