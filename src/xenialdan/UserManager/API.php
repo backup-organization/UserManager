@@ -623,6 +623,11 @@ class API
             } else if ($data === "Modify Ban") {
                 //TODO API::openManageBanUI($player, $user, $form);
             } else if ($data === "Confirm Ban") {
+                if(empty($ban->getReason())){
+                    $player->sendMessage(TextFormat::colorize("&cPlease enter the reason for the provided ban!"));
+                    return;
+                }
+                
                 BanStore::createBan($ban);
                 $player->sendMessage("Successfully banned " . $user->getRealUsername() . "!");
             } else $player->sendForm($form);
@@ -640,7 +645,7 @@ class API
     public static function openBanCreateUI(Player $player, User $user, ?Form $previousForm = null): void
     {
         $form = new CustomForm("Ban " . $user->getRealUsername());
-        $form->addElement(new Input("Reason", "Reason", "§l§cYou have been banned!"));
+        $form->addElement(new Input("Reason", "Reason", ""));
         $form->addElement(new Toggle("Expires", true));
         $form->addElement(new Input("Until", "Example: 1 day 2 hours 5 minutes", "1 day"));
         $form->addElement(new Toggle("Name ban", true));
