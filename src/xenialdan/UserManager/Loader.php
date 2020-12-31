@@ -55,10 +55,15 @@ class Loader extends PluginBase
         return Loader::getInstance()->database;
     }
 
-    public function onLoad(): void
+    /**
+     * @throws LanguageException
+     * @throws InvalidStateException
+     * @throws PluginException
+     * @throws SqlError
+     */
+    public function onEnable(): void
     {
-        self::$instance = $this;
-        $this->saveDefaultConfig();
+          self::$instance = $this;
         //Remove default commands
         foreach (["ban", "ban-ip", "banlist", "pardon", "pardon-ip"] as $commandName) {
             $command = $this->getServer()->getCommandMap()->getCommand($commandName);
@@ -79,15 +84,6 @@ class Loader extends PluginBase
             new PartyCommand("party", "Create parties or manage party members"),
         ]);
     }
-
-    /**
-     * @throws LanguageException
-     * @throws InvalidStateException
-     * @throws PluginException
-     * @throws SqlError
-     */
-    public function onEnable(): void
-    {
         $this->saveDefaultConfig();
         $this->database = libasynql::create($this, $this->getConfig()->get("database"), [
             "sqlite" => "sqlite.sql",
