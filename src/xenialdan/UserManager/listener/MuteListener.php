@@ -15,7 +15,7 @@ use xenialdan\UserManager\User;
 use pocketmine\event\player\PlayerCommandPreprocessEvent;
 use xenialdan\UserManager\UserStore;
 
-class BanListener implements Listener
+class MuteListener implements Listener
 {
     private const WHITELISTED = [
         "/me",
