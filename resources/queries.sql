@@ -1,4 +1,6 @@
-#CREATE TABLE IF NOT EXISTS bans (user_id INT PRIMARY KEY, since TIMESTAMP, until TIMESTAMP, expires BOOL, reason TEXT, types TEXT);
+#CREATE TABLE IF NOT EXISTS bans (user_id INT PRIMARY KEY, since TIMESTAMP, until TIMESTAMP, expires BOOL, reason TEXT, types TEXT, by TEXT);
+#CREATE TABLE IF NOT EXISTS mutes (user_id INT PRIMARY KEY, since TIMESTAMP, until TIMESTAMP, expires BOOL, reason TEXT, types TEXT, by TEXT);
+
 #CREATE TABLE IF NOT EXISTS warns (user_id INT PRIMARY KEY, since TIMESTAMP, reason TEXT);
 #CREATE TABLE IF NOT EXISTS users (user_id INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(16) UNIQUE, lastuuid VARCHAR(256), lastip VARCHAR(15));
 #CREATE TABLE IF NOT EXISTS authcode (user_id INT PRIMARY KEY, authcode VARCHAR(15));
@@ -11,9 +13,13 @@
 #ALTER TABLE `relationship` ADD UNIQUE KEY `unique_users_id` (`user_one_id`,`user_two_id`);
 #CREATE TABLE IF NOT EXISTS messages (sender_id INT, receiver_id INT, status TINYINT, action_user_id INT);
 SELECT * FROM bans WHERE `user_id` = ?;
-INSERT OR REPLACE INTO bans (`user_id`, `since`, `until`, `expires`, `reason`, `types`) VALUES(:user_id, :since, :until, :expires, :reason, :types);
-UPDATE bans SET `user_id` = :user_id, `since` = :since, `until` = :until, `expires` = :expires, `reason` = :reason, `types` = :types WHERE `user_id` = :user_id;
+INSERT OR REPLACE INTO bans (`user_id`, `since`, `until`, `expires`, `reason`, `types`) VALUES(:user_id, :since, :until, :expires, :reason, :types, :by);
+UPDATE bans SET `user_id` = :user_id, `since` = :since, `until` = :until, `expires` = :expires, `reason` = :reason, `types` = :types, `by` = :by WHERE `user_id` = :user_id;
 DELETE FROM bans WHERE `user_id` = ?;
+SELECT * FROM mutes WHERE `user_id` = ?;
+INSERT OR REPLACE INTO mutes (`user_id`, `since`, `until`, `expires`, `reason`, `types`, `by`) VALUES(:user_id, :since, :until, :expires, :reason, :types, :by);
+UPDATE mutes SET `user_id` = :user_id, `since` = :since, `until` = :until, `expires` = :expires, `reason` = :reason, `types` = :types, `by` = :by WHERE `user_id` = :user_id;
+DELETE FROM mutes WHERE `user_id` = ?;
 
 SELECT * FROM warns WHERE `user_id` = ?;
 INSERT OR REPLACE INTO warns (`user_id`, `since`, `reason`) VALUES(?,?,?);

@@ -98,6 +98,38 @@ UPDATE bans SET `user_id` = :user_id, `since` = :since, `until` = :until, `expir
 -- #    {delete
 -- #      :user_id int
 DELETE FROM bans WHERE `user_id` = :user_id;
+
+-- #    }
+-- #  }
+-- #  {mute
+-- #    {get
+-- #      :user_id int
+SELECT * FROM mutes WHERE `user_id` = :user_id;
+-- #    }
+-- #    {getall
+SELECT * FROM mutes;
+-- #    }
+-- #    {add
+-- #      :user_id int
+-- #      :since int
+-- #      :until int
+-- #      :expires bool
+-- #      :reason string
+-- #      :types string
+INSERT OR REPLACE INTO mutes (`user_id`, `since`, `until`, `expires`, `reason`, `types`, `by`) VALUES(:user_id, :since, :until, :expires, :reason, :types, :by);
+-- #    }
+-- #    {update
+-- #      :user_id int
+-- #      :since int
+-- #      :until int
+-- #      :expires bool
+-- #      :reason string
+-- #      :types string
+UPDATE mutes SET `user_id` = :user_id, `since` = :since, `until` = :until, `expires` = :expires, `reason` = :reason, `types` = :types, `by` = :by WHERE `user_id` = :user_id;
+-- #    }
+-- #    {delete
+-- #      :user_id int
+DELETE FROM mutes WHERE `user_id` = :user_id;
 -- #    }
 -- #  }
 -- #  {warn
