@@ -13,6 +13,8 @@ use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
 use poggit\libasynql\SqlError;
 use xenialdan\UserManager\commands\admin\BanCommand;
+use xenialdan\UserManager\commands\admin\MuteCommand;
+use xenialdan\UserManager\commands\admin\MutelistCommand;
 use xenialdan\UserManager\commands\admin\BanlistCommand;
 use xenialdan\UserManager\commands\friend\FriendCommand;
 use xenialdan\UserManager\commands\party\PartyCommand;
@@ -28,6 +30,7 @@ use xenialdan\UserManager\listener\SettingsListener;
 use xenialdan\UserManager\listener\UserBaseEventListener;
 use xenialdan\UserManager\models\Party;
 use xenialdan\UserManager\models\Translations;
+use pocketmine\scheduler\ClosureTask;
 
 class Loader extends PluginBase
 {
@@ -76,7 +79,9 @@ class Loader extends PluginBase
             new BlockCommand("block", "Block users"),
             new UnblockCommand("unblock", "Unblock users"),
             new BanCommand("ban", "%pocketmine.command.ban.player.description"),
+            new MuteCommand("mute", "Mutes another player."),
             new BanlistCommand("banlist", "%pocketmine.command.banlist.description"),
+            new MutelistCommand("mutelist", "Gives a list of muted players."),
             new PartyCommand("party", "Create parties or manage party members"),
         ]);
     }
@@ -111,6 +116,31 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new MuteListener(), $this);
         //translations
         Translations::init();
+        /**
+         * This code checks for any other plugins using the commands below after enable() state.
+         */
+        $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function(): void{
+        foreach (["ban", "ban-ip", "banlist", "pardon", "pardon-ip", "mute", "mutelist", "mute-list"] as $commandName) {
+            $command = $this->getServer()->getCommandMap()->getCommand($commandName);
+            if ($command !== null) {
+                $this->getServer()->getCommandMap()->unregister($command);
+                $this->getLogger()->debug("Unregistered default command $commandName");
+            } else {
+                $this->getLogger()->warning("Could not unregister default command $commandName");
+            }
+        }
+        $this->getServer()->getCommandMap()->registerAll("UserManager", [
+            new UserManagerCommand("usermanager", "UserManager help", ["um"]),
+            new FriendCommand("friend", "Open friend list or manage friends"),
+            new BlockCommand("block", "Block users"),
+            new UnblockCommand("unblock", "Unblock users"),
+            new BanCommand("ban", "%pocketmine.command.ban.player.description"),
+            new MuteCommand("mute", "Mutes another player."),
+            new BanlistCommand("banlist", "%pocketmine.command.banlist.description"),
+            new MutelistCommand("mutelist", "Gives a list of muted players."),
+            new PartyCommand("party", "Create parties or manage party members"),
+        ]);
+        }), 20 * 3);
         $lang = (string)$this->getConfig()->get("language", BaseLang::FALLBACK_LANGUAGE);
         try {
             if (strlen($lang) !== 3) {

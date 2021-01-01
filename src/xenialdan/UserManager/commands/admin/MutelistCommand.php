@@ -12,10 +12,10 @@ use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use xenialdan\UserManager\API;
-use xenialdan\UserManager\BanStore;
-use xenialdan\UserManager\models\Ban;
+use xenialdan\UserManager\MuteStore;
+use xenialdan\UserManager\models\Mute;
 
-class BanlistCommand extends BaseCommand
+class MutelistCommand extends BaseCommand
 {
 
     /**
@@ -24,7 +24,7 @@ class BanlistCommand extends BaseCommand
      */
     protected function prepare(): void
     {
-        $this->setPermission("usermanager.banlist");
+        $this->setPermission("usermanager.mutelist");
         $this->registerArgument(0, new RawStringArgument("Player", true));
     }
 
@@ -41,11 +41,15 @@ class BanlistCommand extends BaseCommand
             return;
         }
         if (empty($args["Player"])){
-            API::openBannedListUI($sender);//TODO
+            API::openMutedListUI($sender);//TODO
     }else {
             $name = trim(strval($args["Player"]));
-            if (($ban = BanStore::getBanByName($name)) instanceof Ban) {
-                API::openBanEntryUI($sender, $ban);
+          /*  if (empty($name)) {
+                $sender->sendMessage("Invalid name given");
+                return;
+            }*/
+            if (($ban = MuteStore::getMuteByName($name)) instanceof Mute) {
+                API::openMuteEntryUI($sender, $ban);
             } else {
                 API::openUserNotFoundUI($sender, $name);
             }
