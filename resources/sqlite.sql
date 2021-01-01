@@ -36,6 +36,17 @@ CREATE TABLE IF NOT EXISTS `bans` (
 `expires` INTEGER NOT NULL,
 `reason`  TEXT    NOT NULL DEFAULT '',
 `types`   TEXT    NOT NULL DEFAULT 'n',
+`by`      TEXT    NOT NULL DEFAULT '',
+PRIMARY KEY (`user_id`)
+);
+CREATE TABLE IF NOT EXISTS `mutes` (
+`user_id` INTEGER NOT NULL,
+`since`   INTEGER NOT NULL,
+`until`   INTEGER NOT NULL,
+`expires` INTEGER NOT NULL,
+`reason`  TEXT    NOT NULL DEFAULT '',
+`types`   TEXT    NOT NULL DEFAULT 'n',
+`by`      TEXT    NOT NULL DEFAULT '',
 PRIMARY KEY (`user_id`)
 );
 -- #    }
