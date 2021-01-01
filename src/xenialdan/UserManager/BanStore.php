@@ -22,7 +22,7 @@ class BanStore
         self::$bans = new Map();
         Loader::$queries->getBanList(function (array $rows): void {
             foreach ($rows as $banData) {
-                $ban = new Ban($banData["user_id"], $banData["since"], $banData["until"], $banData["expires"] === 1, $banData["reason"], $banData["types"]);
+                $ban = new Ban($banData["user_id"], $banData["since"], $banData["until"], $banData["expires"] === 1, $banData["reason"], $banData["types"], $banData["by"]);
                 if (!$ban->hasExpired())
                     self::addBan($ban);
                 else {//TODO Remove/cleanup this hack

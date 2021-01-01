@@ -11,7 +11,6 @@ use xenialdan\UserManager\event\UserBanEvent;
 use xenialdan\UserManager\event\UserJoinEvent;
 use xenialdan\UserManager\Loader;
 use xenialdan\UserManager\models\Ban;
-use VMPE\Zeao\Network;
 
 class BanListener implements Listener
 {
@@ -35,6 +34,7 @@ class BanListener implements Listener
                 return;
             }
             $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
+            $msg .= TextFormat::RED . "\nBanned by: " . TextFormat::GRAY . $ban->by;
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->reason;
             $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY . strftime("%c", $ban->getSince());
         if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
@@ -70,6 +70,7 @@ class BanListener implements Listener
             if ($event->getUser()->isOnline()) {
                 $ban = $event->getBan();
                  $msg = TextFormat::DARK_RED . TextFormat::BOLD . "You are banned!";
+                 $msg .= TextFormat::RED . "\nBanned by: " . TextFormat::GRAY . $ban->by;
             $msg .= TextFormat::RED . "\nReason: " . TextFormat::GRAY . $ban->getReason();
             $msg .= TextFormat::RED . "\nBanned since: " . TextFormat::GRAY .strftime("%c", $ban->getSince());
       if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){

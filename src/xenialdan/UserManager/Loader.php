@@ -22,6 +22,7 @@ use xenialdan\UserManager\commands\UserManagerCommand;
 use xenialdan\UserManager\exceptions\LanguageException;
 use xenialdan\UserManager\listener\BanListener;
 use xenialdan\UserManager\listener\ChatListener;
+use xenialdan\UserManager\listener\MuteListener;
 use xenialdan\UserManager\listener\PartyChatListener;
 use xenialdan\UserManager\listener\SettingsListener;
 use xenialdan\UserManager\listener\UserBaseEventListener;
@@ -107,6 +108,7 @@ class Loader extends PluginBase
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new PartyChatListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new BanListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new MuteListener(), $this);
         //translations
         Translations::init();
         $lang = (string)$this->getConfig()->get("language", BaseLang::FALLBACK_LANGUAGE);

@@ -13,17 +13,25 @@ class Queries
     //Create tables
     const INIT_TABLES_USERS = "usermanager.init.users";
     const INIT_TABLES_BANS = "usermanager.init.bans";
+    const INIT_TABLES_MUTES = "usermanager.init.mutes";
     const INIT_TABLES_WARNS = "usermanager.init.warns";
     const INIT_TABLES_AUTHCODE = "usermanager.init.authcode";
     const INIT_TABLES_RELATIONSHIP = "usermanager.init.relationship";
     const INIT_TABLES_MESSAGES = "usermanager.init.messages";
     const INIT_TABLES_USER_SETTINGS = "usermanager.init.user_settings";
-    //ban TODO
+    //BANS
     const GET_BAN = "usermanager.ban.get";
     const GET_ALL_BANS = "usermanager.ban.getall";
     const ADD_BAN = "usermanager.ban.add";
     const UPDATE_BAN = "usermanager.ban.update";
     const DELETE_BAN = "usermanager.ban.delete";
+
+    //MUTES
+     const GET_MUTE = "usermanager.mute.get";
+     const GET_ALL_MUTES = "usermanager.mute.getall";
+     const ADD_MUTE = "usermanager.mute.add";
+     const UPDATE_MUTE = "usermanager.mute.update";
+     const DELETE_MUTE = "usermanager.mute.delete";
     //warn TODO
     const GET_WARN = "usermanager.warn.get";
     const ADD_WARN = "usermanager.warn.add";
@@ -71,6 +79,7 @@ class Queries
     {
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_USERS);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_BANS);
+        Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_MUTES);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_WARNS);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_AUTHCODE);
         Loader::getDataProvider()->executeGeneric(self::INIT_TABLES_RELATIONSHIP);
@@ -534,6 +543,7 @@ class Queries
             "expires" => $ban->expires,
             "reason" => $ban->reason,
             "types" => $ban->types,
+            "by" => $ban->sender,
         ], $function, function (SqlError $error) {
             var_dump($error);
         });
@@ -554,6 +564,7 @@ class Queries
             "expires" => $ban->expires,
             "reason" => $ban->reason,
             "types" => $ban->types,
+            "by" => $ban->sender,
         ], $function, function (SqlError $error) {
             var_dump($error);
         });
@@ -568,6 +579,86 @@ class Queries
         print "deleteBan";
         print $ban;
         Loader::getDataProvider()->executeChange(self::DELETE_BAN, [
+            "user_id" => $ban->getUserId()
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+     /* BANS */
+
+    /**
+     * @param callable $function
+     */
+    public function getMuteList(callable $function): void
+    {
+        Loader::getDataProvider()->executeSelect(self::GET_ALL_MUTES, [], $function);
+    }
+
+    /**
+     * @param int $id
+     * @param callable $function
+     */
+    public function getMuteByUserId(int $id, callable $function): void
+    {
+        print "getMuteByUserId";
+        Loader::getDataProvider()->executeSelect(self::GET_MUTE, [
+            "user_id" => $id,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function addMute(Mute $ban, callable $function): void
+    {
+        print "addMute";
+        print $ban;
+        Loader::getDataProvider()->executeInsert(self::ADD_MUTE, [
+            "user_id" => $ban->getUserId(),
+            "since" => $ban->since,
+            "until" => $ban->until,
+            "expires" => $ban->expires,
+            "reason" => $ban->reason,
+            "types" => $ban->types,
+            "by" => $ban->sender,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function updateMute(Mute $ban, callable $function): void
+    {
+        print "updateMute";
+        print $ban;
+        Loader::getDataProvider()->executeChange(self::UPDATE_MUTE, [
+            "user_id" => $ban->getUserId(),
+            "since" => $ban->since,
+            "until" => $ban->until,
+            "expires" => $ban->expires,
+            "reason" => $ban->reason,
+            "types" => $ban->types,
+            "by" => $ban->sender,
+        ], $function, function (SqlError $error) {
+            var_dump($error);
+        });
+    }
+
+    /**
+     * @param Ban $ban
+     * @param callable $function
+     */
+    public function deleteMute(Mute $ban, callable $function): void
+    {
+        print "deleteMute";
+        print $ban;
+        Loader::getDataProvider()->executeChange(self::DELETE_MUTE, [
             "user_id" => $ban->getUserId()
         ], $function, function (SqlError $error) {
             var_dump($error);

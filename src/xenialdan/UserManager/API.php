@@ -16,6 +16,7 @@ use xenialdan\customui\windows\CustomForm;
 use xenialdan\customui\windows\ModalForm;
 use xenialdan\customui\windows\SimpleForm;
 use xenialdan\UserManager\models\Ban;
+use xenialdan\UserManager\models\Mute;
 
 class API
 {
@@ -627,6 +628,10 @@ class API
                 if ($previousForm) $player->sendForm($previousForm);
             } else if ($data === "Modify Ban") {
                 //TODO API::openManageBanUI($player, $user, $form);
+            }elseif($data === "Delete Ban"){
+                Loader::$queries->deleteBan($ban, function (int $a): void {
+                    echo $a;
+                });
             } else if ($data === "Confirm Ban") {
                 if(empty($ban->getReason())){
                     $player->sendMessage(TextFormat::colorize("&cPlease enter the reason for the provided ban!"));
@@ -673,8 +678,130 @@ class API
             if ($type_ip) $types .= Ban::TYPE_IP;
             if ($type_uuid) $types .= Ban::TYPE_UUID;
             if ($type_xuid) $types .= Ban::TYPE_XUID;
-            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types);
+            $ban = new Ban($user->getId(), time(), $untilTime, $expires, $reason, $types, $player);
             API::openBanEntryUI($player, $ban, $form);
+        });
+        $form->setCallableClose(function (Player $player) use ($previousForm): void {
+            if ($previousForm) $player->sendForm($previousForm);
+        });
+        $player->sendForm($form);
+    }
+    /**
+     * TODO
+     * @param Player $player
+     * @param Form|null $previousForm
+     */
+    public static function openMutedListUI(Player $player, ?Form $previousForm = null): void
+    {
+        $user = UserStore::getUser($player);
+        if ($user === null) {
+            $player->sendMessage("DEBUG: null");
+            return;
+        }
+        $form = new SimpleForm("Mute Manager - Banned users");
+        foreach (MuteStore::getMutes() as $ban) {
+            $form->addButton(new Button(TextFormat::DARK_RED . UserStore::getUserById($ban->getUserId())->getRealUsername()));//TODO image
+        }
+        $form->addButton(new Button("Back"));
+        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm): void {
+            if ($data === "Back") {
+                if ($previousForm) $player->sendForm($previousForm);
+            } else API::openMuteEntryUI($player, MuteStore::getMuteByName($data), $form);
+        });
+        $player->sendForm($form);
+    }
+
+    /**
+     * @param Player $player
+     * @param Mute $ban
+     * @param Form|null $previousForm
+     * @throws InvalidArgumentException
+     */
+    public static function openMuteEntryUI(Player $player, Mute $ban, ?Form $previousForm = null): void
+    {
+        if (($user = UserStore::getUserById($ban->getUserId())) === null) {
+            $player->sendMessage("Could not find user for mute entry $ban");
+            return;
+        }
+        $content = "";
+        $content .= "Username: " . $user->getRealUsername();
+        if(strftime("%c", $ban->getSince()) === strftime("%c", $ban->getUntil())){
+            $expiry = "Forever";
+        }else{
+            $expiry = strftime("%c", $ban->getUntil());
+        }
+        if ($user->getRealUsername() !== $user->getDisplayName()) $content .= TextFormat::EOL . TextFormat::RESET . "Nickname: " . $user->getDisplayName();
+        $content .= TextFormat::EOL . TextFormat::RESET . "Reason: " . $ban->getReason();
+        $content .= TextFormat::EOL . TextFormat::RESET . "Since: " . strftime("%c", $ban->getSince());
+        $content .= TextFormat::EOL . TextFormat::RESET . "Until: " . $expiry;
+        $content .= TextFormat::EOL . TextFormat::RESET . "Expires: " . ($ban->expires ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        if ($ban->expires) $content .= TextFormat::EOL . TextFormat::RESET . "Has Expired: " . ($ban->hasExpired() ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "Name Mute: " . ($ban->isTypeBanned(Ban::TYPE_NAME) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "IP Mute: " . ($ban->isTypeBanned(Ban::TYPE_IP) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "UUID Mute: " . ($ban->isTypeBanned(Ban::TYPE_UUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $content .= TextFormat::EOL . TextFormat::RESET . "XUID Mute: " . ($ban->isTypeBanned(Ban::TYPE_XUID) ? TextFormat::DARK_GREEN . "Yes" : TextFormat::RED . "No");
+        $form = new SimpleForm($user->getUsername() . " Mute Information", $content);
+        $form->addButton(new Button("Confirm Mute"));
+        $form->addButton(new Button("Modify Mute"));
+        $form->addButton(new Button("Delete Mute"));
+        $form->addButton(new Button("Back"));
+        $form->setCallable(function (Player $player, string $data) use ($form, $previousForm, $user, $ban): void {
+            if ($data === "Back") {
+                if ($previousForm) $player->sendForm($previousForm);
+            } else if ($data === "Modify Mute") { //todo
+            }elseif($data === "Delete Mute"){
+                Loader::$queries->deleteMute($ban, function (int $a): void {
+                    echo $a;
+                });
+                //TODO API::openManageBanUI($player, $user, $form);
+            } else if ($data === "Confirm Ban") {
+                if(empty($ban->getReason())){
+                    $player->sendMessage(TextFormat::colorize("&cPlease enter the reason for the provided ban!"));
+                    return;
+                }
+                
+                MuteStore::createMute($ban);
+                $player->sendMessage("Successfully muted " . $user->getRealUsername() . "!");
+            } else $player->sendForm($form);
+        });
+        $player->sendForm($form);
+    }
+
+    /**
+     * TODO
+     * @param Player $player
+     * @param User $user
+     * @param Form|null $previousForm
+     * @throws InvalidArgumentException
+     */
+    public static function openMuteCreateUI(Player $player, User $user, ?Form $previousForm = null): void
+    {
+        $form = new CustomForm("Mute " . $user->getRealUsername());
+        $form->addElement(new Input("Reason", "Reason", ""));
+        $form->addElement(new Toggle("Expires", true));
+        $form->addElement(new Input("Until", "Example: 1 day 2 hours 5 minutes", "1 day"));
+        $form->addElement(new Toggle("Name Mute", true));
+        $form->addElement(new Toggle("IP Mute", true));
+        $form->addElement(new Toggle("UUID Mute", true));
+        $form->addElement(new Toggle("XUID Mute", true));
+        $form->setCallable(function (Player $player, array $data) use ($form, $user): void {
+            [$reason, $expires, $until, $type_name, $type_ip, $type_uuid, $type_xuid] = $data;
+            $untilTime = time();
+            if ($expires) {
+                //TODO better time check here
+                $untilTime = strtotime($until);
+                if ($untilTime === false) {
+                    $player->sendMessage('"' . $until . '" could not be converted to time');//TODO show form with error
+                    return;
+                }
+            }
+            $types = "";
+            if ($type_name) $types .= Mute::TYPE_NAME;
+            if ($type_ip) $types .= Mute::TYPE_IP;
+            if ($type_uuid) $types .= Mute::TYPE_UUID;
+            if ($type_xuid) $types .= Mute::TYPE_XUID;
+            $ban = new Mute($user->getId(), time(), $untilTime, $expires, $reason, $types, $player);
+            API::openMuteEntryUI($player, $ban, $form);
         });
         $form->setCallableClose(function (Player $player) use ($previousForm): void {
             if ($previousForm) $player->sendForm($previousForm);

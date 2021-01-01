@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace xenialdan\UserManager\models;
 
-use JsonSerializable;
 use pocketmine\Player;
 
-class Ban implements JsonSerializable
+use JsonSerializable;
+
+class Mute implements JsonSerializable
 {
     const TYPE_NAME = "n";
     const TYPE_UUID = "u";
@@ -26,7 +27,8 @@ class Ban implements JsonSerializable
     public $reason = "";
     /** @var string */
     public $types;
-    public $by;    
+    public $by;
+    
     /**
      * Ban constructor.
      * @param int $user_id
@@ -101,7 +103,7 @@ class Ban implements JsonSerializable
     {
         return $this->user_id;
     }
-    public function getBannedBy(): Player{
+    public function getMutedBy(): Player{
         return $this->by;
     }
 
